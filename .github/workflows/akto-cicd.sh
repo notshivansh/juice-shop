@@ -35,13 +35,17 @@ while true; do
           \"testingRunHexId\": \"$AKTO_TEST_ID\"
       }")
 
-  state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty')
+  state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state')
+
+  echo "$response" | jq
+  echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty'
+  echo "$response" | jq -r '.testingRunResultSummaries[0].state'
 
   if [[ "$state" == "COMPLETED" ]]; then
-    count=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues // empty')
-    high=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.HIGH // empty')
-    medium=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.MEDIUM // empty')
-    low=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.LOW // empty')
+    count=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues')
+    high=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.HIGH')
+    medium=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.MEDIUM')
+    low=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.LOW')
 
     echo "[Results]($AKTO_DASHBOARD_URL/dashboard/testing/$AKTO_TEST_ID)"
     echo "HIGH: $high" >> $GITHUB_STEP_SUMMARY
