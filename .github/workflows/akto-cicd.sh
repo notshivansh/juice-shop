@@ -12,11 +12,11 @@ start_time=$(date +%s)
 
 echo "### Akto test summary" >> $GITHUB_STEP_SUMMARY
 
-current_time=$(date +%s)
-
 while true; do
-  elapsed_time=$((current_time - start_time))
   
+  current_time=$(date +%s)
+  elapsed_time=$((current_time - start_time))
+
   if ((elapsed_time >= MAX_POLL_INTERVAL)); then
     echo "Max poll interval reached. Exiting."
     break
@@ -26,10 +26,6 @@ while true; do
   start_timestamp=$((current_time - recency_period / 9))
   end_timestamp=$current_time
   
-  echo $AKTO_DASHBOARD_URL
-  echo $AKTO_API_KEY
-  echo $AKTO_TEST_ID
-
   response=$(curl -s "$AKTO_DASHBOARD_URL/api/fetchTestingRunResultSummaries" \
       --header 'content-type: application/json' \
       --header "X-API-KEY: $AKTO_API_KEY" \
@@ -39,20 +35,13 @@ while true; do
           \"testingRunHexId\": \"$AKTO_TEST_ID\"
       }")
 
-  echo $response
-  echo "$response"
-
-  state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state')
-
-  echo "$response" | jq
-  echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty'
-  echo "$response" | jq -r '.testingRunResultSummaries[0].state'
+  state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty')
 
   if [[ "$state" == "COMPLETED" ]]; then
-    count=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues')
-    high=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.HIGH')
-    medium=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.MEDIUM')
-    low=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.LOW')
+    count=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues // empty')
+    high=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.HIGH // empty')
+    medium=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.MEDIUM // empty')
+    low=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.LOW // empty')
 
     echo "[Results]($AKTO_DASHBOARD_URL/dashboard/testing/$AKTO_TEST_ID)"
     echo "HIGH: $high" >> $GITHUB_STEP_SUMMARY
@@ -69,14 +58,6 @@ while true; do
     exit 1
     break
   else
-    echo $response
-    echo "$response"
-    val=$(echo "$response" | jq)
-    echo $val
-    val2=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty')
-    echo $val2
-    val3=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state')
-    echo $val3
     echo "Waiting for akto test to be completed..."
     sleep 5  # Adjust the polling interval as needed
   fi
