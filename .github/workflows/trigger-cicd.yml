@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Test akto ci/cd
     steps:
+      - uses: actions/checkout@v2
       - uses: akto-api-security/run-scan@v1.0.3
         with:
           AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
