@@ -1,9 +1,13 @@
 name: Trigger akto tests
  
 on:
+  workflow_dispatch:
+    inputs:
+        testRunId:
+          default: "1"
 
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "0 0 */3 * *"
 
 jobs:
   akto_cicd_test:
@@ -14,4 +18,5 @@ jobs:
         with:
           AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
           AKTO_API_KEY: ${{vars.AKTO_API_KEY}}
-          AKTO_TEST_ID: ${{vars.AKTO_TEST_ID}}
+          AKTO_TEST_ID: ${{ github.event.inputs.Deploy == '1' && vars.AKTO_TEST_ID || github.event.inputs.Deploy }}
+      - run: bash ./.github/workflows/akto-cicd.sh
