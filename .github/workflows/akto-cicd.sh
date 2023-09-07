@@ -21,23 +21,20 @@ while true; do
     echo "Max poll interval reached. Exiting."
     break
   fi
-
-  recency_period=$((60 * 24 * 60 * 60))
-  start_timestamp=$((current_time - recency_period / 9))
-  end_timestamp=$current_time
   
   response=$(curl -s "$AKTO_DASHBOARD_URL/api/fetchTestingRunResultSummaries" \
       --header 'content-type: application/json' \
       --header "X-API-KEY: $AKTO_API_KEY" \
       --data "{
-          \"startTimestamp\": \"$start_timestamp\",
-          \"endTimestamp\": \"$end_timestamp\",
           \"testingRunHexId\": \"$AKTO_TEST_ID\"
       }")
 
   state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty')
+  test_start_timestamp=$(echo "$response" | jq -r '.testingRunResultSummaries[0].startTimestamp // empty')
 
-  if [[ "$state" == "COMPLETED" ]]; then
+  test_start_timestamp=$(($test_start_timestamp+600))
+
+  if [ "$state" == "COMPLETED" ] && [ $(($test_start_timestamp-$start_time > 0)) == "1" ]; then
     count=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues // empty')
     high=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.HIGH // empty')
     medium=$(echo "$response" | jq -r '.testingRunResultSummaries[0].countIssues.MEDIUM // empty')
