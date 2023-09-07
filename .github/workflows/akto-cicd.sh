@@ -3,9 +3,9 @@
 sudo apt-get install jq -y
 
 # Akto Variables
-AKTO_DASHBOARD_URL=$AKTO_DASHBOARD_URL
-AKTO_API_KEY=$AKTO_API_KEY
-AKTO_TEST_ID=$AKTO_TEST_ID
+AKTO_DASHBOARD_URL=${AKTO_DASHBOARD_URL}
+AKTO_API_KEY=${AKTO_API_KEY}
+AKTO_TEST_ID=${AKTO_TEST_ID}
 MAX_POLL_INTERVAL=$((30 * 60))  # 30 minutes in seconds
 
 start_time=$(date +%s)
@@ -26,6 +26,10 @@ while true; do
   start_timestamp=$((current_time - recency_period / 9))
   end_timestamp=$current_time
   
+  echo $AKTO_DASHBOARD_URL
+  echo $AKTO_API_KEY
+  echo $AKTO_TEST_ID
+
   response=$(curl -s "$AKTO_DASHBOARD_URL/api/fetchTestingRunResultSummaries" \
       --header 'content-type: application/json' \
       --header "X-API-KEY: $AKTO_API_KEY" \
@@ -34,6 +38,9 @@ while true; do
           \"endTimestamp\": \"$end_timestamp\",
           \"testingRunHexId\": \"$AKTO_TEST_ID\"
       }")
+
+  echo $response
+  echo "$response"
 
   state=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state')
 
@@ -62,6 +69,8 @@ while true; do
     exit 1
     break
   else
+    echo $response
+    echo "$response"
     val=$(echo "$response" | jq)
     echo $val
     val2=$(echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty')
