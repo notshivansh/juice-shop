@@ -62,6 +62,9 @@ while true; do
     exit 1
     break
   else
+    echo "$response" | jq
+    echo "$response" | jq -r '.testingRunResultSummaries[0].state // empty'
+    echo "$response" | jq -r '.testingRunResultSummaries[0].state'
     echo "Waiting for akto test to be completed..."
     sleep 5  # Adjust the polling interval as needed
   fi
