@@ -25,4 +25,4 @@ jobs:
           AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
           AKTO_API_KEY: ${{vars.AKTO_API_KEY}}
           AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
-      - run: bash ./.github/workflows/akto-cicd.sh
+        run: bash ./.github/workflows/akto-cicd.sh
