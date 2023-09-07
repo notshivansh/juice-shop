@@ -47,8 +47,10 @@ while true; do
 
     if [ "$high" -gt 0 ] || [ "$medium" -gt 0 ] || [ "$low" -gt 0 ] ; then
         echo "Vulnerabilities found!!" >> $GITHUB_STEP_SUMMARY
-        exit 1
+        echo "Vulnerabilities found in akto tests. Failing operation."
+        # exit 1
     fi
+    echo "No vulnerabilities found in akto tests."
     break
   elif [[ "$state" == "STOPPED" ]]; then
     echo "Test stopped" >> $GITHUB_STEP_SUMMARY

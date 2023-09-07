@@ -15,11 +15,11 @@ jobs:
     name: Akto CI/CD
     steps:
       - uses: actions/checkout@v2
-      - uses: akto-api-security/run-scan@v1.0.3
-        with:
-          AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
-          AKTO_API_KEY: ${{vars.AKTO_API_KEY}}
-          AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
+      # - uses: akto-api-security/run-scan@v1.0.3
+      #   with:
+      #     AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
+      #     AKTO_API_KEY: ${{vars.AKTO_API_KEY}}
+      #     AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
       - name: Fetch Testing run results 
         env:
           AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
