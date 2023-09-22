@@ -4,22 +4,24 @@ on:
   workflow_dispatch:
     inputs:
         testRunId:
-          default: "1"
-
+          required: false
+  
+  schedule:
+    - cron: "*/5 * * * *"
 jobs:
   akto_cicd_test:
     runs-on: ubuntu-latest
     name: Akto CI/CD
     steps:
-      - uses: actions/checkout@v2
-      - uses: akto-api-security/run-scan@v1.0.3
-        with:
-          AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
-          AKTO_API_KEY: ${{secrets.AKTO_API_KEY}}
-          AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
+      # - uses: actions/checkout@v2
+      # - uses: akto-api-security/run-scan@v1.0.3
+      #   with:
+      #     AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
+      #     AKTO_API_KEY: ${{secrets.AKTO_API_KEY}}
+      #     AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
       - name: Fetch Testing run results 
         env:
           AKTO_DASHBOARD_URL: ${{vars.AKTO_DASHBOARD_URL}}
           AKTO_API_KEY: ${{secrets.AKTO_API_KEY}}
-          AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '1' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
+          AKTO_TEST_ID: ${{ github.event.inputs.testRunId == '' && vars.AKTO_TEST_ID || github.event.inputs.testRunId }}
         run: bash ./.github/workflows/akto-cicd.sh
