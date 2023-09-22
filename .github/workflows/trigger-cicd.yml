@@ -6,9 +6,6 @@ on:
         testRunId:
           default: "1"
 
-  schedule:
-    - cron: "0 0 */3 * *"
-
 jobs:
   akto_cicd_test:
     runs-on: ubuntu-latest
